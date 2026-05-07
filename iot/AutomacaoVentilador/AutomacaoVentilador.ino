@@ -14,7 +14,7 @@ DHT dht(pinoDHT, DHTTYPE);
 // ================= Configurações WiFi e MQTT =================
 // Substitua pelas suas credenciais reais
 const char* ssid = "Redmi_POCO_X6";
-const char* password = "Drx1235";
+const char* password = "Drx12345";
 
 const char* mqtt_server = "9047749c8e904e73bc5ba2d8fce67b59.s1.eu.hivemq.cloud"; 
 const int mqtt_port = 8883; // Porta para placas/IoT (MQTT sobre TLS)
