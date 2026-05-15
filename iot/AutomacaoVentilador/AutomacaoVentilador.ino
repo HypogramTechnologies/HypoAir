@@ -13,8 +13,8 @@ DHT dht(pinoDHT, DHTTYPE);
 
 // ================= Configurações WiFi e MQTT =================
 // Substitua pelas suas credenciais reais
-const char* ssid = "Redmi_POCO_X6";
-const char* password = "Drx12345";
+const char* ssid = "A36";
+const char* password = "eksq7069";
 
 const char* mqtt_server = "9047749c8e904e73bc5ba2d8fce67b59.s1.eu.hivemq.cloud"; 
 const int mqtt_port = 8883; // Porta para placas/IoT (MQTT sobre TLS)
@@ -40,11 +40,11 @@ bool ultimoEstadoPIR = false;
 float temperaturaAtual = 0.0;
 
 // Temperaturas inteligentes
-const float TEMP_LIGAR = 25.0;
-const float TEMP_DESLIGAR = 24.0;
+const float TEMP_LIGAR = 23.0;
+const float TEMP_DESLIGAR = 20.0;
 
 // Timeout sem presença
-const unsigned long TEMPO_AUSENCIA = 5000;//300000; // 5 min
+const unsigned long TEMPO_AUSENCIA = 5000;
 
 // Controle de tempo
 unsigned long tempoAnteriorDHT = 0;
