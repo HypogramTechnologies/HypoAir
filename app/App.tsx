@@ -1,38 +1,100 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, SafeAreaView } from "react-native";
+import { StyleSheet, View, SafeAreaView, ScrollView } from "react-native";
+import { Thermometer, Activity } from "lucide-react-native";
 import PowerButton, { DeviceStatus } from "./src/components/PowerButton";
 import MqttService, { TOPICS } from "./src/services/MqttService";
 import StatusCard from "./src/components/StatusCard";
+import SensorCard from "./src/components/SensorCard";
 
 export default function App() {
   const [status, setStatus] = useState<DeviceStatus>("OFF");
+  const [temperature, setTemperature] = useState<string>("---°C");
+  const [presenceSensorActive, setPresenceSensorActive] = useState<boolean>(true);
+  const [temperatureSensorActive, setTemperatureSensorActive] = useState<boolean>(true);
 
   useEffect(() => {
     MqttService.connect((topic, message) => {
-      if (topic === TOPICS.STATE) {
-        console.log("Mudança de estado detectada via Broker:", message);
-        setStatus(message as DeviceStatus);
-      }
+      switch (topic) {
+        case TOPICS.FAN_STATE:
+          console.log("Estado do ventilador atualizado:", message);
+          setStatus(message as DeviceStatus);
+          break;
 
-      if (topic === TOPICS.SENSORS) {
-        console.log("Dados dos sensores:", message);
+        case TOPICS.TEMP_CURRENT:
+          console.log("Nova leitura de temperatura:", message);
+          setTemperature(`${message}°C`);
+          break;
+
+        case TOPICS.TOGGLE_PRESENCE:
+          console.log("Configuração do sensor de presença recebida:", message);
+          setPresenceSensorActive(message === "ON");
+          break;
+
+        case TOPICS.TOGGLE_TEMPERATURE:
+          console.log("Configuração do sensor de temperatura recebida:", message);
+          setTemperatureSensorActive(message === "ON");
+          break;
+
+        default:
+          break;
       }
     });
 
     return () => MqttService.disconnect();
+    
   }, []);
 
-  const toggleStatus = () => {
+  const handleToggleFan = () => {
     const nextStatus = status === "ON" ? "OFF" : "ON";
-    MqttService.publishCommand(nextStatus);
+    MqttService.publishFanCommand(nextStatus);
+  };
+
+  const handleTogglePresence = (newValue: boolean) => {
+    MqttService.publishPresenceToggle(newValue);
+  };
+
+  const handleToggleTemperature = (newValue: boolean) => {
+    MqttService.publishTemperatureToggle(newValue);
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
+      <ScrollView contentContainerStyle={styles.content}>
+        
         <StatusCard status={status} />
-        <PowerButton status={status} onPress={toggleStatus} />
-      </View>
+        
+        <View style={styles.buttonContainer}>
+          <PowerButton status={status} onPress={handleToggleFan} />
+        </View>
+
+        <View style={styles.sensorsContainer}>
+          
+          <SensorCard 
+            icon={Thermometer} 
+            title="Temperatura" 
+            value={temperature} 
+          />
+
+          <SensorCard 
+            icon={Activity} 
+            title="Sensor de presença" 
+            subtitle={presenceSensorActive ? "Ativo" : "Inativo"}
+            hasSwitch
+            switchValue={presenceSensorActive}
+            onSwitchChange={handleTogglePresence}
+          />
+
+          <SensorCard 
+            icon={Thermometer} 
+            title="Sensor de temperatura" 
+            subtitle={temperatureSensorActive ? "Ativo" : "Inativo"}
+            hasSwitch
+            switchValue={temperatureSensorActive}
+            onSwitchChange={handleToggleTemperature}
+          />
+
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -40,11 +102,18 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0F172A",
+    backgroundColor: "#0F172A", 
   },
   content: {
-    flex: 1,
-    justifyContent: "center",
     alignItems: "center",
+    paddingVertical: 40,
+  },
+  buttonContainer: {
+    marginVertical: 30,
+  },
+  sensorsContainer: {
+    width: "100%",
+    alignItems: "center",
+    marginTop: 10,
   },
 });
