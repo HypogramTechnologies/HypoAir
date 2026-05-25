@@ -42,7 +42,7 @@ bool movimentoDetectado = false;
 bool ultimoEstadoPIR = false;
 float temperaturaAtual = 0.0;
 
-const float TEMP_LIGAR = 23.0;
+const float TEMP_LIGAR = 21.0;
 const float TEMP_DESLIGAR = 20.0;
 const unsigned long TEMPO_AUSENCIA = 5000;
 
