@@ -11,6 +11,7 @@ export default function App() {
   const [temperature, setTemperature] = useState<string>("---°C");
   const [presenceSensorActive, setPresenceSensorActive] = useState<boolean>(true);
   const [temperatureSensorActive, setTemperatureSensorActive] = useState<boolean>(true);
+  const [presenceDetected, setPresenceDetected] = useState<boolean>(false);
 
   useEffect(() => {
     MqttService.connect((topic, message) => {
@@ -33,6 +34,12 @@ export default function App() {
         case TOPICS.TOGGLE_TEMPERATURE:
           console.log("Configuração do sensor de temperatura recebida:", message);
           setTemperatureSensorActive(message === "ON");
+          break;
+
+        case TOPICS.SENSORS:
+          const payload = JSON.parse(message);
+          console.log("Dados dos sensores recebidos:", payload);
+          setPresenceDetected(payload.presenca === "true");
           break;
 
         default:
@@ -78,7 +85,7 @@ export default function App() {
           <SensorCard 
             icon={Activity} 
             title="Sensor de presença" 
-            subtitle={presenceSensorActive ? "Ativo" : "Inativo"}
+            subtitle={presenceSensorActive ? presenceDetected ? "Presença detectada" : "Nenhuma presença detectada" : "Inativo"}
             hasSwitch
             switchValue={presenceSensorActive}
             onSwitchChange={handleTogglePresence}
@@ -87,7 +94,7 @@ export default function App() {
           <SensorCard 
             icon={Thermometer} 
             title="Sensor de temperatura" 
-            subtitle={temperatureSensorActive ? "Ativo" : "Inativo"}
+            subtitle={temperatureSensorActive ? "Temperatura preestabelecida: 21°C" : "Inativo"}
             hasSwitch
             switchValue={temperatureSensorActive}
             onSwitchChange={handleToggleTemperature}

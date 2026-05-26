@@ -13,6 +13,7 @@ export const TOPICS = {
   TEMP_CURRENT: "hypoair/temperature/current",
   TOGGLE_PRESENCE: "hypoair/sensor/presence/toggle",
   TOGGLE_TEMPERATURE: "hypoair/sensor/temperature/toggle",
+  SENSORS: "hypoair/sensors",
 };
 
 class MqttService {
@@ -38,6 +39,7 @@ class MqttService {
         TOPICS.TEMP_CURRENT,
         TOPICS.TOGGLE_PRESENCE,
         TOPICS.TOGGLE_TEMPERATURE,
+        TOPICS.SENSORS,
       ]);
 
       if (onConnect) onConnect();
