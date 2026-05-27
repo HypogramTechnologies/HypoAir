@@ -39,7 +39,7 @@ export default function App() {
         case TOPICS.SENSORS:
           const payload = JSON.parse(message);
           console.log("Dados dos sensores recebidos:", payload);
-          setPresenceDetected(payload.presenca === "true");
+          setPresenceDetected(payload.presenca);
           break;
 
         default:
